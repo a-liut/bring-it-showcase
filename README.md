@@ -20,6 +20,6 @@ The phone frame matches an iPhone 18 Pro screenshot (1206×2622). The current fi
 They were taken in the iOS Simulator from the bring-it Debug build. The backend ran against a separate `bringit_showcase` database (`db:seed` wipes the database it targets), with event dates moved into the future. Ads were turned off for the session (`useStartAds(false)` in `app/(app)/_layout.tsx`, then reverted). The push screen uses `xcrun simctl push` with copy from `backend/server/utils/notificationText.ts`.
 
 ## Store links
-The Google Play button points to `app.bringit.mobile`. The App Store button is a placeholder until the app has a listing: set its `href` in the `stores-tpl` template in `index.html`.
+The Google Play button points to `app.bringit.mobile`. The App Store button is disabled and reads "Coming soon" until the app has a listing. When it does, turn the `<span class="store soon">` in the `stores-tpl` template in `index.html` back into an `<a class="store" href="…">`.
 
 Colors and fonts mirror `bring-it/frontend/src/theme/tokens.ts`.
