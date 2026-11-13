@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bring-IT · Plans with friends, sorted</title>
+<meta name="description" content="Create an event, invite your friends, and see who's coming and who's bringing what. Free on iPhone and Android.">
+<meta name="theme-color" content="#f5ead8">
+<link rel="icon" href="assets/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Figtree:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Tokens mirror bring-it/frontend/src/theme/tokens.ts ("Organic" design system). */
+:root{
+  --bg:#f5ead8; --surface:#ebddc5; --text:#201e1d; --ink:#2e2b25;
+  --accent:#c67139; --accent2:#7a8a5e;
+  --muted:rgba(32,30,29,.68); --divider:rgba(32,30,29,.16);
+  --t-acc-bg:#fff2eb; --t-acc-fg:#643312; --t-ac2-bg:#f0fae1; --t-ac2-fg:#3d472b; --t-neu-bg:#f9f4ed; --t-neu-fg:#474238;
+  --on-accent:#f5ead8; --store-bg:#2e2b25; --store-fg:#f9f4ed;
+  --shadow-lg:0 12px 32px rgba(46,43,37,.22);
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#2e2b25; --surface:#474238; --text:#f9f4ed;
+  --muted:rgba(249,244,237,.68); --divider:rgba(249,244,237,.16);
+  --t-acc-bg:#402310; --t-acc-fg:#ffe1d0; --t-ac2-bg:#272e1b; --t-ac2-fg:#e1eecc; --t-neu-bg:#645c50; --t-neu-fg:#eee7db;
+  --on-accent:#2e2b25; --store-bg:#f9f4ed; --store-fg:#2e2b25;
+}}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{background:var(--bg);color:var(--text);font:400 17px/1.55 Figtree,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,.brand{font-family:Caprasimo,serif;font-weight:400;letter-spacing:-.01em}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+a:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+nav{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--divider)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-size:22px;color:var(--text);text-decoration:none}
+.brand img{width:36px;height:36px;border-radius:10px}
+.navlinks{display:flex;gap:24px;font-weight:600;font-size:15px}
+.navlinks a{color:var(--muted);text-decoration:none}
+.navlinks a:hover,.navlinks a.on{color:var(--text)}
+
+.stores{display:flex;flex-wrap:wrap;gap:12px}
+.store{display:inline-flex;align-items:center;gap:10px;background:var(--store-bg);color:var(--store-fg);border-radius:999px;padding:10px 22px 10px 18px;text-decoration:none;min-height:56px;transition:transform .15s}
+.store:hover{transform:translateY(-2px)}
+.store svg{width:24px;height:24px;flex:none}
+.store small{display:block;font-size:11px;opacity:.75;line-height:1.1}
+.store b{display:block;font:600 17px/1.2 Figtree,sans-serif}
+
+.hero{padding:72px 0 40px}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+.hero h1{font-size:clamp(40px,6vw,68px);line-height:1.05;margin-bottom:20px}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.lede{font-size:20px;color:var(--muted);max-width:30ch;margin-bottom:32px}
+.art{position:relative;display:flex;justify-content:center}
+.art::before{content:"";position:absolute;inset:8% 4%;background:var(--surface);border-radius:46% 54% 42% 58%/55% 45% 55% 45%}
+.art img{position:relative;width:100%;max-width:440px;height:auto}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:28px}
+.tag{display:inline-block;padding:2px 12px;border-radius:999px;font:600 13px/1.5 Figtree;letter-spacing:.2px}
+.tag.acc{background:var(--t-acc-bg);color:var(--t-acc-fg)}
+.tag.ac2{background:var(--t-ac2-bg);color:var(--t-ac2-fg)}
+.tag.neu{background:var(--t-neu-bg);color:var(--t-neu-fg)}
+
+.phone{position:relative;width:300px;aspect-ratio:300/626;border-radius:48px;background:#1b1a18;padding:11px;box-shadow:var(--shadow-lg),inset 0 0 0 2px #3a3833;flex:none}
+.phone .screen{position:relative;width:100%;height:100%;border-radius:38px;overflow:hidden;background:#f5ead8;color:#201e1d;font-size:13px}
+.phone .island{position:absolute;top:22px;left:50%;transform:translateX(-50%);width:92px;height:26px;border-radius:20px;background:#000;z-index:3}
+.screen img.shot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+
+/* Sticky phone: text scrolls on the left, one phone stays on the right and swaps screens. */
+.features{display:grid;grid-template-columns:1fr 1fr;gap:64px;max-width:1120px;margin:0 auto;padding:0 24px}
+.stage{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;grid-column:2;grid-row:1}
+.stage::before,.phonecol::before{content:"";position:absolute;width:440px;height:440px;border-radius:50%;background:var(--surface)}
+.stage .layer{position:absolute;inset:0;opacity:0;transition:opacity .45s ease}
+.stage .layer.on{opacity:1}
+.texts{grid-column:1;grid-row:1}
+.feature{min-height:90vh;display:flex;align-items:center;scroll-margin-top:64px}
+.feature .txt{opacity:.35;transition:opacity .3s}
+.feature.on .txt{opacity:1}
+.phonecol{display:none}
+.kicker{font:700 13px Figtree;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.feature h2{font-size:clamp(32px,4vw,46px);line-height:1.1;margin-bottom:18px}
+.feature p{color:var(--muted);font-size:18px;max-width:42ch}
+.bullets{list-style:none;padding:0;margin-top:24px;display:grid;gap:12px}
+.bullets li{display:flex;gap:12px;align-items:flex-start;font-weight:600}
+.bullets li::before{content:"";flex:none;width:22px;height:22px;margin-top:2px;border-radius:50%;background:var(--accent2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f5ead8' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center/14px no-repeat}
+
+.cta{margin:64px auto 0;max-width:1072px;background:var(--accent);color:var(--on-accent);border-radius:32px;padding:64px 40px;text-align:center}
+.cta h2{font-size:clamp(30px,4vw,44px);margin-bottom:12px}
+.cta p{opacity:.9;margin-bottom:28px;font-size:18px}
+.cta .stores{justify-content:center}
+.cta .store{background:#201e1d;color:#f9f4ed}
+footer{padding:40px 0 56px;color:var(--muted);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px}
+footer a{color:var(--muted)}
+
+@media (max-width:860px){
+  .navlinks{display:none}
+  .hero{padding-top:40px}
+  .hero .wrap{grid-template-columns:1fr;gap:40px}
+  .features{display:block}
+  .stage{display:none}
+  .feature{min-height:0;padding:64px 0;flex-direction:column;align-items:stretch}
+  .feature .txt{opacity:1}
+  .phonecol{display:flex;justify-content:center;position:relative;margin-top:40px}
+  .phonecol::before{width:320px;height:320px;top:50%;left:50%;transform:translate(-50%,-50%)}
+  .cta{margin:40px 16px 0;padding:48px 24px}
+}
+
+/* Mock screens: shown until screenshots/<key>.png exists. Always light, like a screenshot. */
+.app{position:absolute;inset:0;display:flex;flex-direction:column;background:#f5ead8;color:#201e1d;font-family:Figtree,sans-serif}
+.app .status{height:54px;flex:none;display:flex;justify-content:space-between;align-items:flex-end;padding:0 26px 6px;font:600 13px Figtree}
+.app .body{flex:1;overflow:hidden;padding:6px 14px;display:flex;flex-direction:column;gap:10px}
+.app h3{font:400 26px/1.1 Caprasimo;margin:4px 2px 2px}
+.app .card{background:#ebddc5;border-radius:22px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.app .card .t{font:400 16px Caprasimo}
+.app .meta{font-size:11.5px;color:rgba(32,30,29,.66)}
+.app .row{display:flex;align-items:center;gap:8px}
+.app .sp{flex:1}
+.app .tag{font-size:10.5px;padding:1px 9px}
+.app .tag.acc{background:#fff2eb;color:#643312}.app .tag.ac2{background:#f0fae1;color:#3d472b}.app .tag.neu{background:#f9f4ed;color:#474238}
+.app .av{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:700 10px Figtree;color:#f9f4ed;border:2px solid #ebddc5;margin-left:-7px}
+.app .av:first-child{margin-left:0}
+.app .av.big{width:38px;height:38px;font-size:13px;margin:0;border:0}
+.app .seg{display:flex;background:rgba(32,30,29,.07);border-radius:999px;padding:3px}
+.app .seg span{flex:1;text-align:center;padding:5px 0;border-radius:999px;font:600 12px Figtree;color:rgba(32,30,29,.68)}
+.app .seg span.on{background:#f5ead8;color:#201e1d;box-shadow:0 1px 2px rgba(46,43,37,.14)}
+.app .seg span.go{background:#7a8a5e;color:#f5ead8}
+.app .btn{background:#c67139;color:#f5ead8;border-radius:999px;font:400 11.5px Caprasimo;padding:5px 12px}
+.app .btn.sec{background:transparent;color:#201e1d;border:1px solid rgba(32,30,29,.16)}
+.app .tabbar{flex:none;height:74px;display:flex;justify-content:space-around;align-items:flex-start;padding-top:10px;border-top:1px solid rgba(32,30,29,.16);background:#ebddc5}
+.app .tabbar div{display:flex;flex-direction:column;align-items:center;gap:2px;font:600 10px Figtree;color:rgba(32,30,29,.55)}
+.app .tabbar div.on{color:#c67139}
+.app .tabbar svg{width:22px;height:22px}
+.app .fab{position:absolute;right:16px;bottom:88px;width:52px;height:52px;border-radius:50%;background:#c67139;color:#f5ead8;display:grid;place-items:center;font:400 28px Caprasimo;box-shadow:0 3px 10px rgba(46,43,37,.3)}
+.app .item{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid rgba(32,30,29,.16);font-size:12.5px}
+.app .item:first-of-type{border-top:0}
+.app .check{width:18px;height:18px;border-radius:50%;background:#7a8a5e;flex:none}
+.app .check.off{background:transparent;border:2px dashed rgba(32,30,29,.35)}
+.app .search{background:rgba(32,30,29,.07);border-radius:999px;padding:8px 14px;color:rgba(32,30,29,.55);font-size:12.5px}
+.app .label{font:700 10.5px Figtree;letter-spacing:.08em;text-transform:uppercase;color:rgba(32,30,29,.66);margin:4px 2px -2px}
+.lock{position:absolute;inset:0;background:linear-gradient(160deg,#d67f48 0%,#b2622d 38%,#56633f 100%);color:#fff;display:flex;flex-direction:column;align-items:center;font-family:Figtree}
+.lock .date{margin-top:70px;font:600 15px Figtree;opacity:.9}
+.lock .clock{font:600 76px/1 Figtree;letter-spacing:-2px;margin-bottom:22px}
+.lock .notif{width:calc(100% - 22px);background:rgba(249,244,237,.82);backdrop-filter:blur(12px);color:#201e1d;border-radius:20px;padding:10px 12px;display:flex;gap:10px;margin-bottom:8px;font-size:12px;line-height:1.35}
+.lock .notif img{width:30px;height:30px;border-radius:8px;flex:none}
+.lock .notif .when{margin-left:auto;color:rgba(32,30,29,.55);font-size:11px;padding-left:6px}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a class="brand" href="#top"><img src="assets/icon.png" alt="">Bring-IT</a>
+  <div class="navlinks"><a href="#events">Events</a><a href="#details">Details</a><a href="#friends">Friends</a><a href="#notifications">Notifications</a></div>
+</div></nav>
+
+<header class="hero" id="top"><div class="wrap">
+  <div>
+    <h1>Plans with friends, <em>sorted.</em></h1>
+    <p class="lede">Create an event, invite your people, and see who's coming and who's bringing what.</p>
+    <div class="stores" data-stores></div>
+    <div class="pills"><span class="tag neu">Simple events</span><span class="tag ac2">Bring something</span><span class="tag acc">Polls</span></div>
+  </div>
+  <div class="art"><img src="assets/logo.png" alt="Friends gathered around a Bring-IT checklist" width="568" height="568"></div>
+</div></header>
+
+<main class="features">
+  <div class="stage" aria-hidden="true"><div class="phone"><div class="island"></div><div class="screen" id="stage"></div></div></div>
+  <div class="texts">
+    <section class="feature" id="events" data-screen="events">
+      <div class="txt">
+        <div class="kicker">Events</div>
+        <h2>Every plan in one place</h2>
+        <p>Upcoming events, invitations waiting for an answer, and the ones you host. All on one screen.</p>
+        <ul class="bullets"><li>Simple, bring-something, or poll events</li><li>See who's going at a glance</li><li>Create a new event in seconds</li></ul>
+      </div>
+      <div class="phonecol"></div>
+    </section>
+
+    <section class="feature" id="details" data-screen="details">
+      <div class="txt">
+        <div class="kicker">Event details</div>
+        <h2>Who's coming, who's bringing what</h2>
+        <p>RSVP with one tap, claim an item from the list, or vote on the date. Nobody shows up with the third bag of chips.</p>
+        <ul class="bullets"><li>Going, maybe, can't go</li><li>Shared "bring" list with claims</li><li>Polls to pick the date or place</li></ul>
+      </div>
+      <div class="phonecol"></div>
+    </section>
+
+    <section class="feature" id="friends" data-screen="friends">
+      <div class="txt">
+        <div class="kicker">Friends</div>
+        <h2>Your people, one tap away</h2>
+        <p>Add friends once and invite them to anything. Accept requests and keep your circle tidy.</p>
+        <ul class="bullets"><li>Friend requests and search</li><li>Invite friends to any event</li><li>Block and privacy controls</li></ul>
+      </div>
+      <div class="phonecol"></div>
+    </section>
+
+    <section class="feature" id="notifications" data-screen="push">
+      <div class="txt">
+        <div class="kicker">Notifications</div>
+        <h2>Never miss a change</h2>
+        <p>Push notifications when you're invited, when plans change, and when someone claims an item.</p>
+        <ul class="bullets"><li>Invites and RSVP updates</li><li>Messages from the host</li><li>Choose what you're notified about</li></ul>
+      </div>
+      <div class="phonecol"></div>
+    </section>
+  </div>
+</main>
+
+<section class="wrap" id="download"><div class="cta">
+  <h2>Get Bring-IT</h2>
+  <p>Free on iPhone and Android.</p>
+  <div class="stores" data-stores></div>
+</div></section>
+
+<footer><div class="wrap">
+  <span>© 2026 Bring-IT</span>
+  <span><a href="https://bring-it-api-5uibm42xlq-ew.a.run.app/privacy.html">Privacy</a> · <a href="https://bring-it-api-5uibm42xlq-ew.a.run.app/terms.html">Terms</a></span>
+</div></footer>
+
+<template id="stores-tpl">
+  <!-- TODO: replace with the App Store listing URL once the app is published -->
+  <a class="store" href="#download" aria-label="Download on the App Store"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.7-1-2.7-4.1zM13.9 4.9c.7-.9 1.2-2 1.1-3.2-1 0-2.3.7-3 1.6-.7.8-1.3 2-1.1 3.1 1.1.1 2.3-.6 3-1.5z"/></svg><span><small>Download on the</small><b>App Store</b></span></a>
+  <a class="store" href="https://play.google.com/store/apps/details?id=app.bringit.mobile" aria-label="Get it on Google Play"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#34a853" d="M3.6 2.3 13.3 12l-9.7 9.7c-.4-.2-.6-.6-.6-1.1V3.4c0-.5.2-.9.6-1.1z"/><path fill="#fbbc04" d="m16.6 15.3-3.3-3.3 3.3-3.3 3.8 2.2c1 .6 1 1.6 0 2.2z"/><path fill="#ea4335" d="M16.6 15.3 13.3 12l-9.7 9.7c.4.2.9.2 1.4-.1z"/><path fill="#4285f4" d="M16.6 8.7 5 2.4c-.5-.3-1-.3-1.4-.1l9.7 9.7z"/></svg><span><small>Get it on</small><b>Google Play</b></span></a>
+</template>
+
+<script>
+const AV = (i, c, big) => `<span class="av${big ? ' big' : ''}" style="background:${c}">${i}</span>`
+const avs = (list) => `<span class="row" style="gap:0">${list.map(([i, c]) => AV(i, c)).join('')}</span>`
+const A = ['A', '#c67139'], M = ['M', '#7a8a5e'], L = ['L', '#8c491a'], S = ['S', '#56633f'], G = ['G', '#a19786']
+const status = '<div class="status"><span>9:41</span><span>●●● ▮</span></div>'
+const ICONS = {
+  cal: '<path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="3"/>',
+  users: '<circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M16 3.1a4 4 0 0 1 0 7.8M22 21a7 7 0 0 0-4-6.3"/>',
+  bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
+  user: '<circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>',
+}
+const svg = (k) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>`
+const tabbar = (on) => `<div class="tabbar">${[['cal', 'Events'], ['users', 'Friends'], ['bell', 'Alerts'], ['user', 'Profile']].map(([k, l]) => `<div class="${l === on ? 'on' : ''}">${svg(k)}${l}</div>`).join('')}</div>`
+const person = ([i, c, n, u], right) => `<div class="row">${AV(i, c, true)}<div><b style="font-size:13px">${n}</b><div class="meta">${u}</div></div><span class="sp"></span>${right}</div>`
+
+const MOCKS = {
+events: `<div class="app">${status}<div class="body">
+  <h3>Events</h3>
+  <div class="seg"><span class="on">Upcoming</span><span>Invites · 2</span><span>Hosting</span></div>
+  <div class="card"><div class="row"><span class="tag ac2">Bring something</span><span class="sp"></span><span class="meta">Sat 14 Jun</span></div>
+    <div class="t">Picnic at the park</div><div class="meta">Parco Sempione · 12:30</div>
+    <div class="row">${avs([A, M, L, S])}<span class="meta">6 going</span></div></div>
+  <div class="card"><div class="row"><span class="tag acc">Poll</span><span class="sp"></span><span class="meta">Vote by Wed</span></div>
+    <div class="t">Board game night</div><div class="meta">Fri or Sat? 4 votes so far</div>
+    <div class="row">${avs([M, G, L])}<span class="meta">3 voted</span></div></div>
+  <div class="card"><div class="row"><span class="tag neu">Simple</span><span class="sp"></span><span class="meta">Sun 22 Jun</span></div>
+    <div class="t">Mia's birthday</div><div class="meta">Bar Luce · 19:00</div>
+    <div class="row">${avs([A, S])}<span class="meta">2 going</span></div></div>
+  </div><div class="fab">+</div>${tabbar('Events')}</div>`,
+details: `<div class="app">${status}<div class="body">
+  <div class="meta" style="font-weight:600;color:#8c491a">‹ Events</div>
+  <span class="tag ac2" style="align-self:flex-start">Bring something</span>
+  <h3 style="margin-top:0">Picnic at the park</h3>
+  <div class="meta">Sat 14 Jun · 12:30 · Parco Sempione</div>
+  <div class="label">Are you going?</div>
+  <div class="seg"><span class="go">Going</span><span>Maybe</span><span>Can't go</span></div>
+  <div class="card" style="gap:0"><div class="row" style="margin-bottom:4px"><span class="t" style="font-size:14px">What to bring</span><span class="sp"></span><span class="meta">4 of 5 claimed</span></div>
+    <div class="item"><span class="check"></span><span>Focaccia</span><span class="sp"></span>${AV(...L)}</div>
+    <div class="item"><span class="check"></span><span>Drinks</span><span class="sp"></span><span class="meta">You</span></div>
+    <div class="item"><span class="check"></span><span>Fruit salad</span><span class="sp"></span>${AV(...M)}</div>
+    <div class="item"><span class="check"></span><span>Plates &amp; cups</span><span class="sp"></span>${AV(...S)}</div>
+    <div class="item"><span class="check off"></span><span>Picnic blanket</span><span class="sp"></span><span class="btn">I'll bring it</span></div>
+  </div>
+  <div class="row">${avs([A, M, L, S, G])}<span class="meta">6 going · 2 maybe</span></div>
+  </div></div>`,
+friends: `<div class="app">${status}<div class="body">
+  <h3>Friends</h3>
+  <div class="search">Search by name or username</div>
+  <div class="label">Requests · 2</div>
+  <div class="card" style="gap:10px">
+    ${person(['G', '#a19786', 'Giulia', '@giulia'], '<span class="btn">Accept</span>')}
+    ${person(['T', '#643312', 'Tommaso', '@tommy'], '<span class="btn">Accept</span>')}
+  </div>
+  <div class="label">Your friends · 24</div>
+  ${[['A', '#c67139', 'Alex', '@alex.k'], ['M', '#7a8a5e', 'Mia', '@mia'], ['L', '#8c491a', 'Leo', '@leo'], ['S', '#56633f', 'Sara', '@sara']].map((p) => person(p, '<span class="btn sec">Invite</span>')).join('')}
+  </div>${tabbar('Friends')}</div>`,
+push: `<div class="lock"><div class="date">Thursday 12 June</div><div class="clock">9:41</div>
+  ${[['Mia invited you', '<b>Picnic at the park</b> · Sat 14 Jun', 'now'], ['Leo is bringing Focaccia', 'Picnic at the park · 4 of 5 items claimed', '2m'], ['Poll closed', '<b>Board game night</b> is on Friday', '1h'], ['Message from Alex', 'Bring sunscreen, it\'ll be hot!', '3h']].map(([t, b, w]) =>
+    `<div class="notif"><img src="assets/icon.png" alt=""><div><div class="row"><b>${t}</b><span class="when">${w}</span></div><div>${b}</div></div></div>`).join('')}
+</div>`,
+}
+
+// A screenshot at screenshots/<key>.png replaces its mock automatically.
+const screen = (k) => `${MOCKS[k]}<img class="shot" src="screenshots/${k}.png" alt="" onerror="this.remove()">`
+
+document.querySelectorAll('[data-stores]').forEach((el) => el.append(document.getElementById('stores-tpl').content.cloneNode(true)))
+
+const feats = [...document.querySelectorAll('.feature')]
+feats.forEach((f) => { f.querySelector('.phonecol').innerHTML = `<div class="phone"><div class="island"></div><div class="screen">${screen(f.dataset.screen)}</div></div>` })
+const stage = document.getElementById('stage')
+stage.innerHTML = feats.map((f) => `<div class="layer" data-k="${f.dataset.screen}">${screen(f.dataset.screen)}</div>`).join('')
+
+const show = (f) => {
+  feats.forEach((x) => x.classList.toggle('on', x === f))
+  stage.querySelectorAll('.layer').forEach((l) => l.classList.toggle('on', l.dataset.k === f.dataset.screen))
+  document.querySelectorAll('.navlinks a').forEach((a) => a.classList.toggle('on', a.hash === `#${f.id}`))
+}
+show(feats[0])
+const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && show(e.target)), { rootMargin: '-45% 0px -45% 0px' })
+feats.forEach((f) => io.observe(f))
+</script>
+</body>
+</html>
